@@ -1,22 +1,17 @@
-<HomePage>
+<Button>:
+    font_size: 40
+    color: 1, 0, 0, 1
+
+<HomePage>:
     GridLayout:
         cols: 1
-        size: root.width, root.height 
+        size: root.size
 
         GridLayout:
             cols: 2
-            
-            Label:
-                text: "Temperature:"
 
-            TextInput:
-                multiline: False
-            
-            Label:
-                text: "Time:"
-
-            TextInput:
-                multiline: False
-                        
-        Button:
-            text: "Submit"
+            Button:
+                id: btn_connect
+                pos_hint: {"x":0.5, "top":0.4} 
+                text: "Connect to Socket"
+                on_press: root.runSocket()
