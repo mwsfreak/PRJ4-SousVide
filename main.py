@@ -7,6 +7,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 
+#from android.permissions import request_permissions, Permission
+#request_permissions([Permission.INTERNET])
+
 from socket import socket, AF_INET, SOCK_STREAM
 from lib import Lib
 
@@ -22,8 +25,10 @@ class HomePage(Widget):
 
         # Initialize socket and establish connection to server
         clientSocket = socket(AF_INET, SOCK_STREAM)
+
         print(f"Client is connecting to server at {serverName}:{PORT}")
         clientSocket.connect((serverName,PORT))
+
         print("Client connected!")
 
         # Send filename to server
