@@ -1,6 +1,6 @@
 <Button>:
-    font_size: 40
-    color: 1, 0, 0, 1
+    font_size: 25
+    color: 0, 1, 1, 1
 
 <HomePage>:
     GridLayout:
@@ -9,9 +9,85 @@
 
         GridLayout:
             cols: 2
+            Label:
+                text: "Temperature"
+            
+            TextInput:
+                multiline: False
+                write_tab: False
+            
+            Label:
+                text: "Time"
+            
+            TextInput:
+                multiline: False
+                write_tab: False
 
             Button:
-                id: btn_connect
-                pos_hint: {"x":0.5, "top":0.4} 
-                text: "Connect to Socket"
-                on_press: root.runSocket()
+                id: btn_start
+                text: "Start cook"
+                on_press: root.btn_start()
+
+            Button:
+                id: btn_settings
+                text: "Settings"
+                on_press: root.btn()
+
+<settingsPage>:
+    address: address
+    port: port
+
+    Label:
+        text: "Settings Page"
+        font_size: '20sp'
+        size_hint: 0.6, 0.1
+        pos_hint: {"x":0.2, "top":0.95}
+
+    Label:
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        text: "Address"
+        font_size: '20sp'
+        size_hint: 0.3, 0.15
+        pos_hint: {"x":0.05, "top":0.8}
+
+    TextInput:
+        id: address
+        text_size: self.size
+        halign: 'right'
+        valign: 'middle'
+        multiline: False
+        write_tab: False
+        text: "bisgaardfranks.dk"
+        font_size: '20sp'
+        size_hint: 0.6, 0.15
+        pos_hint: {"right":0.95, "top":0.8}
+
+    Label:
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        text: "Port"
+        font_size: '20sp'
+        size_hint: 0.3, 0.15
+        pos_hint: {"x":0.05, "top":0.6}
+
+    TextInput:
+        id: port
+        text_size: self.size
+        halign: 'right'
+        valign: 'middle'
+        multiline: False
+        write_tab: False
+        text: "9000"
+        font_size: '20sp'
+        size_hint: 0.2, 0.15
+        pos_hint: {"right":0.95, "top":0.6}
+
+    Button:
+        id: btn_connect
+        text: "Connect"
+        size_hint: 0.8, 0.2
+        pos_hint: {"x":0.1, "y":0.1}
+        on_press: root.btn_connect()
