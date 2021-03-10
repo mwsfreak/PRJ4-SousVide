@@ -10,42 +10,57 @@ from kivy.uix.widget import Widget
 #from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
+from kivy.metrics import dp, sp
 
 from socket import socket, AF_INET, SOCK_STREAM
 from lib import Lib
 
 BUFSIZE = 1000
+connected = 0
+socketConn = socket(AF_INET, SOCK_STREAM)
 
 class HomePage(Widget):
     def btn(self):
         show_settings()
     
     def btn_start(self):
-        sendSocket(socketConnection)
+        sendSocket(socketConn)
  
 class settingsPage(FloatLayout):
     address = ObjectProperty(None)
     port = ObjectProperty(None)
 
     def btn_connect(self):
-        global socketConnection 
-        socketConnection = self.runSocket(self.address.text, int(self.port.text))
-    
-    def runSocket(self, address, port):
-        print("runSocket Called!")
+        global connected
+        global socketConn
 
-        # Initialize socket and establish connection to server
-        clientSocket = socket(AF_INET, SOCK_STREAM)
+        print(connected)
 
-        print(f"Client is connecting to server at {address}:{port}")
-        clientSocket.connect((address,port))
+        if (connected == 1):
+            print(f"Closing connection")
 
-        print("Client connected!")
-        return clientSocket
+            Lib.writeTextTCP("Close me!", socketConn)
+            socketConn.close()
+            self.ids.btn_connect.text = "Connect"
 
+            connected = 0
+
+        else:
+            # Initialize socket and establish connection to server
+            socketConn = socket(AF_INET, SOCK_STREAM)
+
+            print(f"Connecting to server at {self.address.text}:{self.port.text}")
+            socketConn.connect((self.address.text,int(self.port.text)))
+            self.ids.btn_connect.text = "Disconnect"
+            print("Client connected!")
+            connected = 1
+            print(f"connected is = {connected}")
+
+        return socketConn
+        
 def show_settings():
     show = settingsPage()
-    popupWindow = Popup(title="Settings page title", content=show, size_hint=(None, None), size=(400,300))
+    popupWindow = Popup(title="Settings page title", content=show, size_hint=(None, None), size=(dp(400),dp(300)))
     popupWindow.open()
 
 def sendSocket(clientSocket):
