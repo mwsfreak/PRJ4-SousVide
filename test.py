@@ -20,7 +20,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.metrics import dp, sp
 
-Builder.load_file('main.kv')
+Builder.load_file('test.kv')
 
 #-- Constants
 BUFSIZE = 1000
@@ -86,9 +86,9 @@ def sendSocket(clientSocket):
     Lib.writeTextTCP(json.dumps(message), clientSocket)
 
 
-class SousVideApp(App):
+class myTest(App):
     def build(self):
         return HomePage()
 
 if __name__ == '__main__':
-    SousVideApp().run()
+    myTest().run()

@@ -1,0 +1,122 @@
+<Button>:
+    font_size: sp(25)
+    color: 0, 1, 1, 1
+
+<Label>:
+    font_size: sp(20)
+
+<TextInput>:
+    font_size: sp(20)
+
+
+<HomePage>:
+    FloatLayout:
+        size: root.width, root.height
+
+        Button:
+            id: btn_settings
+            text: "Settings"
+            on_press: root.btn()
+            size_hint: 0.2, 0.2
+            pos_hint: {"right":1, "top":1}
+
+        Label:
+            text: "Temperature"
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+            size_hint: 0.3, 0.15
+            pos_hint: {"x":0.2, "top":0.8}
+
+        TextInput:
+            id: temperature
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+            multiline: False
+            write_tab: False
+            text: ""
+            size_hint: 0.3, 0.15
+            pos_hint: {"right":0.8, "top":0.8}
+        
+        Label:
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+            text: "Time"
+            size_hint: 0.3, 0.15
+            pos_hint: {"x":0.2, "top":0.6}
+
+        TextInput:
+            id: port
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+            multiline: False
+            write_tab: False
+            text: ""
+            size_hint: 0.3, 0.15
+            pos_hint: {"right":0.8, "top":0.6}
+
+        Button:
+            id: btn_start
+            text: "Start cook"
+            on_press: root.btn_start()
+            size_hint: 0.5, 0.2
+            pos_hint: {"center_x":0.5, "top":0.3}
+
+
+
+<settingsPage>:
+    address: address
+    port: port
+
+    Label:
+        text: "Settings Page"
+        size_hint: 0.6, 0.1
+        pos_hint: {"x":0.2, "top":0.95}
+
+    Label:
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        text: "Address"
+        size_hint: 0.3, 0.15
+        pos_hint: {"x":0.05, "top":0.8}
+
+    TextInput:
+        id: address
+        text_size: self.size
+        halign: 'right'
+        valign: 'middle'
+        multiline: False
+        write_tab: False
+        text: "bisgaardfranks.dk"
+        size_hint: 0.6, 0.15
+        pos_hint: {"right":0.95, "top":0.8}
+
+    Label:
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        text: "Port"
+        size_hint: 0.3, 0.15
+        pos_hint: {"x":0.05, "top":0.6}
+
+    TextInput:
+        id: port
+        text_size: self.size
+        halign: 'right'
+        valign: 'middle'
+        multiline: False
+        write_tab: False
+        text: "9000"
+        size_hint: 0.2, 0.15
+        pos_hint: {"right":0.95, "top":0.6}
+
+    Button:
+        id: btn_connect
+        text: "Connect"
+        size_hint: 0.8, 0.2
+        pos_hint: {"x":0.1, "y":0.1}
+        on_press: root.btn_connect()
