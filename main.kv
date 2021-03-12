@@ -18,10 +18,18 @@
 
         Button:
             id: btn_settings
-            text: "Settings"
-            on_press: root.btn_settings()
+            #text: "Settings"
             size_hint: 0.2, 0.2
             pos_hint: {"right":1, "top":1}
+            background_color: 0, 0, 0, 0
+            
+            on_press: root.btn_settings()
+            Image:
+                source: "images/settings.webp"
+                center_x: self.parent.center_x 
+                center_y: self.parent.center_y
+                allow_stretch: True
+                size: self.parent.size
 
         Label:
             text: "Temperature"
