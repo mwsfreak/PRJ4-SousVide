@@ -46,9 +46,10 @@ def decode(message):
 	switcher = {
 		"start": startCook,
 		"stop": stopCook,
+		"close": lambda message: -1
 	}
 	# Get the function from switcher dictionary
-	func = switcher.get(command, lambda message: -1)
+	func = switcher.get(command, lambda message: 0 )
 	# Execute the function
 	funcReturn = func(messageDecoded)
 	print(funcReturn)

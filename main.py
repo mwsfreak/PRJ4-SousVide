@@ -24,37 +24,45 @@ Builder.load_file('main.kv')
 
 #-- Constants
 BUFSIZE = 1000
-connected = 0
+connStateGlobal = 0
 socketConn = socket(AF_INET, SOCK_STREAM)
 
 class HomePage(Widget):
-    pass
-    def btn(self):
+    temperature = ObjectProperty(None)
+    time = ObjectProperty(None)
+
+    def btn_settings(self):
         show_settings()
     
     def btn_start(self):
-        sendSocket(socketConn)
+        message = {
+            "command" : "start",
+            "temp" : self.temperature.text,
+            "time" : self.time.text
+        }
+        sendSocket(socketConn, message)
  
 class settingsPage(FloatLayout):
     address = ObjectProperty(None)
     port = ObjectProperty(None)
+    global connStateGlobal
 
     def btn_connect(self):
-        global connected
         global socketConn
+        global connStateGlobal
 
-        print(connected)
+        print(connStateGlobal)
 
-        if (connected == 1):
+        if (connStateGlobal == 1):
             print(f"Closing connection")
 
             closeMsg = json.dumps({"command": "close"})
             Lib.writeTextTCP(closeMsg, socketConn)
             socketConn.close()
 
-            self.ids.btn_connect.text = "Connect"
-
-            connected = 0
+            self.ids.btn_conn.text = "Connect"
+            self.ids.btn_conn.background_color = 0.5, 0, 0, 1
+            connStateGlobal = 0
 
         else:
             # Initialize socket and establish connection to server
@@ -62,26 +70,28 @@ class settingsPage(FloatLayout):
 
             print(f"Connecting to server at {self.address.text}:{self.port.text}")
             socketConn.connect((self.address.text,int(self.port.text)))
-            self.ids.btn_connect.text = "Disconnect"
+            self.ids.btn_conn.text = "Disconnect"
+            self.ids.btn_conn.background_color = 0, 0.5, 0, 1
             print("Client connected!")
-            connected = 1
-            print(f"connected is = {connected}")
+            connStateGlobal = 1
+            print(f"connected is = {connStateGlobal}")
 
         return socketConn
         
 def show_settings():
     show = settingsPage()
+    if (connStateGlobal == 1):
+        show.ids.btn_conn.text = "Disconnect"
+        show.ids.btn_conn.background_color = 0, 0.5, 0, 1
+    else:
+        show.ids.btn_conn.text = "Connect"
+        show.ids.btn_conn.background_color = 0.5, 0, 0, 1
+
     popupWindow = Popup(title="Settings page title", content=show, size_hint=(None, None), size=(dp(400),dp(300)))
     popupWindow.open()
 
-def sendSocket(clientSocket):
-    message = {
-        "command" : "start",
-        "temp" : "60",
-        "time" : "240"
-    }
 
-    # Send filename to server
+def sendSocket(clientSocket, message):
     print(f"Sending command to server: {message}")
     Lib.writeTextTCP(json.dumps(message), clientSocket)
 

@@ -10,13 +10,16 @@
 
 
 <HomePage>:
+    temperature: temperature
+    time: time
+
     FloatLayout:
         size: root.width, root.height
 
         Button:
             id: btn_settings
             text: "Settings"
-            on_press: root.btn()
+            on_press: root.btn_settings()
             size_hint: 0.2, 0.2
             pos_hint: {"right":1, "top":1}
 
@@ -48,7 +51,7 @@
             pos_hint: {"x":0.2, "top":0.6}
 
         TextInput:
-            id: port
+            id: time
             text_size: self.size
             halign: 'right'
             valign: 'middle'
@@ -58,6 +61,7 @@
             size_hint: 0.3, 0.15
             pos_hint: {"right":0.8, "top":0.6}
 
+        #Needs to be grayed out if not connected
         Button:
             id: btn_start
             text: "Start cook"
@@ -115,8 +119,10 @@
         pos_hint: {"right":0.95, "top":0.6}
 
     Button:
-        id: btn_connect
+        id: btn_conn
+        background_normal: ''
+        background_color: 0.5, 0, 0, 1
         text: "Connect"
         size_hint: 0.8, 0.2
         pos_hint: {"x":0.1, "y":0.1}
-        on_press: root.btn_connect()
+        on_release: root.btn_connect()
