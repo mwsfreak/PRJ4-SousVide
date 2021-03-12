@@ -1,4 +1,4 @@
-#!python3
+#!/usr/bin/python3
 
 #-- Python imports
 from socket import socket, AF_INET, SOCK_STREAM
