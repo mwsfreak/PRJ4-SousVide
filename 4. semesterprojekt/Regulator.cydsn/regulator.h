@@ -9,14 +9,14 @@
  *
  * ========================================
 */
-#define Ti 2503.4                                 //Sek
-#define Kp 3.8063                                    //Times gain
-#define F_SAMPLE 3.0                                   //Hz
+#ifndef REGULATOR_H
+#define REGULATOR_H
 
-double b0, b1;                                        //Regulator koefficients
-double errorNew, errorOld, outputNew, outputOld;      //Memory elements for regulator
+double b0, b1;                                      //Regulator koefficients
+double errorNew, errorOld, outputNew, outputOld;    //Memory elements for regulator
 
-void initRegulator();
+void initRegulator(double Kp, double Ti, double f_sample);
 double calculateControlSignal(double processVal, double setpoint);
 
+#endif /* REGULATOR_H */
 /* [] END OF FILE */

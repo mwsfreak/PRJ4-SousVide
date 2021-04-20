@@ -9,11 +9,14 @@
  *
  * ========================================
 */
-#ifndef HEATCONTROLLER_H
-#define HEATCONTROLLER_H
+#ifndef TEMPERATURE_MEASUREMENT_H
+#define TEMPERATURE_MEASUREMENT_H
+    
+    
+void initTempMeasure();
 
-void initHeatController();
-void setControlSignal(double controlSignal);
+double getProcessTemp(void);
 
-#endif /* HEATCONTROLLER_H */
+#endif /* TEMPERATURE_MEASUREMENT_H */
+
 /* [] END OF FILE */
