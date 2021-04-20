@@ -28,11 +28,11 @@ void initTempMeasure() {
 double getProcessTemp(void) {
     double processTemp = 0.0;
     
-    int16_t mV_sense = ADC_CURRENT_SENSE_CountsTo_mVolts(ADC_CURRENT_SENSE_GetResult16());
-    int16_t mV_PT1000 = ADC_CURRENT_SENSE_CountsTo_mVolts(ADC_CURRENT_SENSE_GetResult16());
+    double V_sense = ADC_CURRENT_SENSE_CountsTo_Volts(ADC_CURRENT_SENSE_GetResult16());
+    double V_PT1000 = ADC_CURRENT_SENSE_CountsTo_Volts(ADC_CURRENT_SENSE_GetResult16());
     
-    double current = mV_sense / R_SENSE;
-    double R_PT1000 = mV_PT1000 / current;
+    double current = V_sense / R_SENSE;
+    double R_PT1000 = V_PT1000 / current;
 
     processTemp = ((sqrt(2500*pow(A,2)-10000*B+10*B*R_PT1000)/100)-A/2)/B;
     

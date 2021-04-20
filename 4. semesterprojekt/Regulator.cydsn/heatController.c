@@ -20,9 +20,12 @@ void initHeatController()
 void setControlSignal(double controlSignal)
 {
     // Write desired duty cycle into PWM controller
-    if(controlSignal <= 100)
-    heatPWM_WriteCompare((uint16)(controlSignal * 100)); 
-    else
-    heatPWM_WriteCompare(10000); 
+    if(controlSignal <= 100) {
+        heatPWM_WriteCompare((uint16)(controlSignal * 100));
+    } else if (controlSignal <= 0) {
+        heatPWM_WriteCompare(0);
+    } else {
+        heatPWM_WriteCompare(10000);
+    }
 }
 /* [] END OF FILE */
