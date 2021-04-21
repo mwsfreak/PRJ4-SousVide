@@ -15,7 +15,7 @@
 
 const double A = 0.0039083;
 const double B = -0.0000005775;
-const uint16_t R_SENSE = 15000;
+const uint16_t R_SENSE = 3300;
 
 double V_sense, V_PT1000, current, R_PT1000;
 
@@ -23,13 +23,15 @@ void initTempMeasure() {
     ADC_CURRENT_SENSE_Start();
     ADC_TEMP_VOLTAGE_Start();
     
-    ADC_CURRENT_SENSE_StartConvert();
+    //ADC_CURRENT_SENSE_StartConvert();
     ADC_TEMP_VOLTAGE_StartConvert();
 }
 
 double getProcessTemp(void) {
     double processTemp = 0.0;
     
+    ADC_CURRENT_SENSE_IsEndConversion(ADC_CURRENT_SENSE_WAIT_FOR_RESULT); 
+        
     V_sense = ADC_CURRENT_SENSE_CountsTo_Volts(ADC_CURRENT_SENSE_GetResult16());
     V_PT1000 = ADC_TEMP_VOLTAGE_CountsTo_Volts(ADC_TEMP_VOLTAGE_GetResult16());
     
