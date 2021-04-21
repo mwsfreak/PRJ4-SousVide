@@ -23,9 +23,11 @@ const double Kp = 3.8063;       //Times gain
 const double Ti = 2503.4;       //Sek
 const double f_sample = 3.0;    //Hz
 
+extern double V_sense, V_PT1000, current, R_PT1000;
+
 int main(void)
 {
-    CyDelay(5000);
+    CyDelay(2000);
     UART_Start();
     UART_PutString("Regulator is running.. \n\r");
     CyGlobalIntEnable; /* Enable global interrupts. */
@@ -47,7 +49,7 @@ int main(void)
         //CyDelay(10);
         //temp += (controlSignal - 10) / 100;
         
-        sprintf(buffer, "Temperatur: %f         Control signal: %f\n\r", temp, controlSignal);
+        sprintf(buffer, "Temperatur: %f     Control signal: %f      V_sense: %f V     V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
         UART_PutString(buffer);
     }
 }

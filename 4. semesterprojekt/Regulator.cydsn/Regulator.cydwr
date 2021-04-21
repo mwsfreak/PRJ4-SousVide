@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DesignWideResources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://cypress.com/xsd/cydwr">
+  <Group key="Analog2">
+    <Group key="PLACEMENT">
+      <Group key="F(SAR,1)">
+        <Data key="INST_GUID_PATH" value="6de741c6-ca7f-4de0-a169-47c5f11aa11b/d92a7135-2b12-4921-a988-c00ec713d147" />
+        <Data key="RTL_NAME_SUFFIX" value="" />
+      </Group>
+    </Group>
+  </Group>
   <Group key="Clock2">
     <Data key="ClockSolver" value="1" />
     <Group key="DesigneWideClks" />
@@ -252,7 +260,11 @@
   <Group key="DWRInstGuidMapping">
     <Group key="Pin">
       <Data key="4a228007-0334-453e-9d02-b1f25e8a9a1e" value="MOSFET_OUT" />
+      <Data key="86ed9ac5-0a9a-48d7-8a7b-d3d5040f0048" value="Pin_4" />
+      <Data key="1226e863-c6df-4980-b8ea-bb69faaee579" value="Pin_2" />
       <Data key="1425177d-0d0e-4468-8bcc-e638e5509a9b" value="Rx" />
+      <Data key="77715107-f8d5-47e5-a629-0fb83101ac6b" value="Pin_1" />
+      <Data key="e473ea26-7f8c-4b27-8769-4f8e83175b30" value="Pin_3" />
       <Data key="ed092b9b-d398-4703-be89-cebf998501f6" value="Tx" />
     </Group>
   </Group>
@@ -3345,9 +3357,29 @@
         <Data key="Port Format" value="0,0" />
       </Group>
     </Group>
+    <Group key="86ed9ac5-0a9a-48d7-8a7b-d3d5040f0048">
+      <Group key="0">
+        <Data key="Port Format" value="0,4" />
+      </Group>
+    </Group>
+    <Group key="1226e863-c6df-4980-b8ea-bb69faaee579">
+      <Group key="0">
+        <Data key="Port Format" value="3,4" />
+      </Group>
+    </Group>
     <Group key="1425177d-0d0e-4468-8bcc-e638e5509a9b">
       <Group key="0">
         <Data key="Port Format" value="12,6" />
+      </Group>
+    </Group>
+    <Group key="77715107-f8d5-47e5-a629-0fb83101ac6b">
+      <Group key="0">
+        <Data key="Port Format" value="3,7" />
+      </Group>
+    </Group>
+    <Group key="e473ea26-7f8c-4b27-8769-4f8e83175b30">
+      <Group key="0">
+        <Data key="Port Format" value="0,1" />
       </Group>
     </Group>
     <Group key="ed092b9b-d398-4703-be89-cebf998501f6">
