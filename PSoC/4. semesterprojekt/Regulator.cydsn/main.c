@@ -17,13 +17,20 @@
 #include <stdint.h>
 
 CY_ISR_PROTO(UART_RX_HANDLER);
+CY_ISR_PROTO(SAMPLE_HANDLER);
 
 /* -- Regulatorparametre -- */
 const double Kp = 3.8063;       //Times gain
-const double Ti = 2503.4;       //Sek
-const double f_sample = 3.0;    //Hz
+const double Ti = 2536.2;       //Sek
+const double f_sample = (1/68.5);    //Hz
+
+double temp = 0;
+double controlSignal = 0;
+char buffer[256];
+char rxChar = 0;
 
 extern double V_sense, V_PT1000, current, R_PT1000;
+static int setpoint;
 
 int main(void)
 {
@@ -32,31 +39,70 @@ int main(void)
     UART_PutString("Regulator is running.. \n\r");
     CyGlobalIntEnable; /* Enable global interrupts. */
     rx_int_StartEx(UART_RX_HANDLER);
+    sample_int_StartEx(SAMPLE_HANDLER);
     
     initHeatController();
     initRegulator(Kp, Ti, f_sample);
     initTempMeasure();
     
-    double temp = 20;
-    double controlSignal = 0;
-    char buffer[256];
-    
     for(;;)
     {
-        temp = getProcessTemp();
-        controlSignal = calculateControlSignal(temp, 60);
-        setControlSignal(controlSignal);
-        //CyDelay(10);
-        //temp += (controlSignal - 10) / 100;
-        
-        sprintf(buffer, "Temperatur: %f     Control signal: %f      V_sense: %f V     V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
-        UART_PutString(buffer);
+        if(rxChar != 0)
+        {
+            switch(rxChar)
+            {
+                case 's':
+                {
+                    initRegulator(Kp, Ti, f_sample);
+                    sampleTimer_Start();   
+                    heatPWM_Start();
+                    UART_PutString("Regulator started\n\r");
+                    UART_PutString("setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000\n\r");
+                    
+                    rxChar = 0;
+                    break;
+                }
+                case 'e':
+                {
+                    sampleTimer_Stop();
+                    heatPWM_Stop();
+                    UART_PutString("Regulator ended\n\r");
+                    
+                    rxChar = 0;
+                    break;
+                }
+                default:
+                {
+                    setpoint = (rxChar - 48) * 10;
+                    UART_PutString("Regulator got new setpoint\n\r");
+                    
+                    rxChar = 0;
+                    break;
+                }
+            }
+        } 
     }
 }
 
 CY_ISR(UART_RX_HANDLER)
 {
-       
+    rxChar = UART_GetChar();
+    rx_int_ClearPending();
+}
+
+CY_ISR(SAMPLE_HANDLER)
+{
+    temp = getProcessTemp();
+    controlSignal = calculateControlSignal(temp, setpoint);
+    setControlSignal(controlSignal);
+        
+    //sprintf(buffer, "Temperatur: %f     ,Control signal: %f      ,V_sense: %f V     ,V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
+    // setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000
+    sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, temp, (setpoint-temp), controlSignal, V_sense, V_PT1000);
+    UART_PutString(buffer);
+    
+    sample_int_ClearPending();
+    sampleTimer_ReadStatusRegister();
 }
 
 

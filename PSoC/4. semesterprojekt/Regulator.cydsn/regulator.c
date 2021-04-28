@@ -20,20 +20,30 @@ void initRegulator(double Kp, double Ti, double f_sample)
     b0 = (2 + ((1/f_sample)/Ti)) * (Kp/2);
     b1 = (((1/f_sample)/Ti) - 2) * (Kp/2);
     
-    char buffer2[256];
+    // Reset regulator memory
+    outputOld = 0;
+    errorOld = 0;
+    
+    /*char buffer2[256];
     sprintf(buffer2, "b0 = %f\n\rb1 = %f\n\n\r",b0, b1);
-    UART_PutString(buffer2);
+    UART_PutString(buffer2);*/
 }
 
 double calculateControlSignal(double processVal, double setpoint)
 {
-    char buffer3[256];
+    //char buffer3[256];
     
     // Calculate error
     errorNew = setpoint - processVal;
     
     // Calculate new output
     outputNew = outputOld + (b0 * errorNew) + (b1 * errorOld);
+    
+    // Anti wind-up
+    if(outputNew > 100)
+        outputNew = 100;
+    if(outputNew < 0)
+        outputNew = 0;
     
     //sprintf(buffer3, "errorNew = %f\n\rerrorOld = %f\n\routputNew = %f\n\routputOld = %f\n\r", errorNew, errorOld, outputNew, outputOld);
     //UART_PutString(buffer3);
