@@ -98,7 +98,7 @@ CY_ISR(SAMPLE_HANDLER)
         
     //sprintf(buffer, "Temperatur: %f     ,Control signal: %f      ,V_sense: %f V     ,V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
     // setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000
-    sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, temp, (setpoint-temp), controlSignal, V_sense, V_PT1000);
+    sprintf(buffer, ",%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, temp, (setpoint-temp), controlSignal, V_sense, V_PT1000);
     UART_PutString(buffer);
     
     sample_int_ClearPending();
