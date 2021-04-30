@@ -14,11 +14,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void initRegulator(double Kp, double Ti, double f_sample)
+void initRegulator(double Kp, double Ti, double T_sample)
 {
     // Calculate regulator parameters
-    b0 = (2 + ((1/f_sample)/Ti)) * (Kp/2);
-    b1 = (((1/f_sample)/Ti) - 2) * (Kp/2);
+    b0 = (2 + (T_sample/Ti)) * (Kp/2);
+    b1 = ((T_sample/Ti) - 2) * (Kp/2);
     
     // Reset regulator memory
     outputOld = 0;

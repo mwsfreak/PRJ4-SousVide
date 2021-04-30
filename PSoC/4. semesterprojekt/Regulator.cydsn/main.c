@@ -22,7 +22,7 @@ CY_ISR_PROTO(SAMPLE_HANDLER);
 /* -- Regulatorparametre -- */
 const double Kp = 3.8063;       //Times gain
 const double Ti = 2536.2;       //Sek
-const double f_sample = (1/68.5);    //Hz
+const double T_sample = 68.5;    //Hz
 
 double temp = 0;
 double controlSignal = 0;
@@ -42,7 +42,7 @@ int main(void)
     sample_int_StartEx(SAMPLE_HANDLER);
     
     initHeatController();
-    initRegulator(Kp, Ti, f_sample);
+    initRegulator(Kp, Ti, T_sample);
     initTempMeasure();
     
     for(;;)
@@ -53,7 +53,7 @@ int main(void)
             {
                 case 's':
                 {
-                    initRegulator(Kp, Ti, f_sample);
+                    initRegulator(Kp, Ti, T_sample);
                     sampleTimer_Start();   
                     heatPWM_Start();
                     UART_PutString("Regulator started\n\r");
@@ -91,14 +91,14 @@ CY_ISR(UART_RX_HANDLER)
 }
 
 CY_ISR(SAMPLE_HANDLER)
-{
+{ 
     temp = getProcessTemp();
     controlSignal = calculateControlSignal(temp, setpoint);
     setControlSignal(controlSignal);
         
     //sprintf(buffer, "Temperatur: %f     ,Control signal: %f      ,V_sense: %f V     ,V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
     // setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000
-    sprintf(buffer, ",%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, temp, (setpoint-temp), controlSignal, V_sense, V_PT1000);
+    sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, temp, (setpoint-temp), controlSignal, V_sense, V_PT1000);
     UART_PutString(buffer);
     
     sample_int_ClearPending();
