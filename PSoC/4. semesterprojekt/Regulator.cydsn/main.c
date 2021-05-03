@@ -28,9 +28,10 @@ double temp = 0;
 double controlSignal = 0;
 char buffer[256];
 char rxChar = 0;
+int sampleCount = 0;
 
-extern double V_sense, V_PT1000, current, R_PT1000;
-static int setpoint;
+double V_sense, V_PT1000, current, R_PT1000;
+int setpoint;
 
 int main(void)
 {
@@ -92,10 +93,17 @@ CY_ISR(UART_RX_HANDLER)
 
 CY_ISR(SAMPLE_HANDLER)
 { 
+    sampleCount++;
+    
     temp = getProcessTemp();
-    controlSignal = calculateControlSignal(temp, setpoint);
-    setControlSignal(controlSignal);
-        
+    
+    if(sampleCount >= 68)
+    {
+        controlSignal = calculateControlSignal(temp, setpoint);
+        setControlSignal(controlSignal);
+        sampleCount = 0;
+    }
+            
     //sprintf(buffer, "Temperatur: %f     ,Control signal: %f      ,V_sense: %f V     ,V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
     // setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000
     sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, temp, (setpoint-temp), controlSignal, V_sense, V_PT1000);
