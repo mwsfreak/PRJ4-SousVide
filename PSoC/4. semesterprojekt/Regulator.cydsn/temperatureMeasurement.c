@@ -15,7 +15,7 @@
 
 const double A = 0.0039083;
 const double B = -0.0000005775;
-const uint16_t R_SENSE = 3300;
+const uint16_t R_SENSE = 1000;
 
 double V_sense, V_PT1000, current, R_PT1000;
 

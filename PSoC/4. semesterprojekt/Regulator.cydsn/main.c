@@ -22,7 +22,7 @@ CY_ISR_PROTO(SAMPLE_HANDLER);
 /* -- Regulatorparametre -- */
 const double Kp = 3.8063;       //Times gain
 const double Ti = 2536.2;       //Sek
-const double T_sample = 68.5;    //Hz
+const double T_sample = 68;    //Hz
 
 double temp = 0;
 double controlSignal = 0;
