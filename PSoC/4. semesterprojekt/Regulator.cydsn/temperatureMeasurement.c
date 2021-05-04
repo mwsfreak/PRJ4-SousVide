@@ -31,8 +31,9 @@ double getProcessTemp(void) {
     double processTemp = 0.0;
     
     ADC_CURRENT_SENSE_IsEndConversion(ADC_CURRENT_SENSE_WAIT_FOR_RESULT); 
-        
     V_sense = ADC_CURRENT_SENSE_CountsTo_Volts(ADC_CURRENT_SENSE_GetResult16());
+    
+    ADC_TEMP_VOLTAGE_IsEndConversion(ADC_CURRENT_SENSE_WAIT_FOR_RESULT);
     V_PT1000 = ADC_TEMP_VOLTAGE_CountsTo_Volts(ADC_TEMP_VOLTAGE_GetResult16());
     
     current = V_sense / R_SENSE;
