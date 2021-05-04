@@ -20,9 +20,9 @@ CY_ISR_PROTO(UART_RX_HANDLER);
 CY_ISR_PROTO(SAMPLE_HANDLER);
 
 /* -- Regulatorparametre -- */
-const double Kp = 3.8063;       //Times gain
-const double Ti = 2536.2;       //Sek
-const double T_sample = 68.5;    //Hz
+const double Kp = 3.8063;       // Times gain
+const double Ti = 2536.2;       // Sek
+const double T_sample = 68;     // sekunder
 
 double controlSignal = 0;
 int setpoint;
@@ -44,6 +44,8 @@ double V_sense, V_PT1000, current, R_PT1000;
 char buffer[256];
 char rxChar = 0;
 
+enum status {stopped, started};
+enum status regulatorState = stopped;
 
 
 
@@ -68,21 +70,19 @@ int main(void)
             {
                 case 's':
                 {
-                    initRegulator(Kp, Ti, T_sample);
-                   // sampleTimer_Start();   Bliver den brugt til noget..? - eller kun start og stop af ADC konverteringer..??
+                    initRegulator(Kp, Ti, T_sample);                  
                     heatPWM_Start();
                     UART_PutString("Regulator started\n\r");
                     UART_PutString("setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000\n\r");
-                    
+                    regulatorState = started;
                     rxChar = 0;
                     break;
                 }
                 case 'e':
                 {
-                   // sampleTimer_Stop();   Bliver den brugt til noget..? - eller kun start og stop af ADC konverteringer..??
                     heatPWM_Stop();
                     UART_PutString("Regulator ended\n\r");
-                    
+                    regulatorState = stopped;
                     rxChar = 0;
                     break;
                 }
@@ -103,22 +103,23 @@ int main(void)
 
         /* -- Get Input Value -- */
         inputCount = (inputCount == SIZE ? 0 : inputCount);
-        input[inputCount%MAVG] = (double)(Value_counter_ReadPeriod()-Value_counter_ReadCapture())/SAMPLESIZE;
+        input[inputCount%MAVG] = (double)Value_counter_ReadCapture()/SAMPLESIZE;
         /* -- Set Temperature -- */
         temp[inputCount] = getProcessTemp(input);
         
     
-        if(sampleCount >= 68)
+        if(sampleCount >= (T_sample*SIZE))
         {
             controlSignal = calculateControlSignal(temp[inputCount], setpoint);
             setControlSignal(controlSignal);
             sampleCount = 0;
         }
-                
-        //sprintf(buffer, "Temperatur: %f     ,Control signal: %f      ,V_sense: %f V     ,V_PT1000: %f V \n\r", temp, controlSignal, V_sense, V_PT1000);
-        // setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000
-        sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp[inputCount], (float)(setpoint-temp[inputCount]), controlSignal, V_sense, V_PT1000);
-        UART_PutString(buffer);
+        
+        if(inputCount == (SIZE -1) && regulatorState == started)
+        {
+            sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp[inputCount], (float)(setpoint-temp[inputCount]), controlSignal, V_sense, V_PT1000);
+            UART_PutString(buffer);
+        }
     }
 }
 
@@ -135,7 +136,8 @@ CY_ISR(SAMPLE_HANDLER)
     sampleCount++;
     /* -- Counter ADC Input/Output -- */
     inputCount++;
-
+    inputCount = (inputCount == SIZE ? 0 : inputCount++);
+    
     sample_int_ClearPending();
 }
 
