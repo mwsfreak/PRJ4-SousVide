@@ -17,7 +17,7 @@
 #include <stdint.h>
 
 CY_ISR_PROTO(UART_RX_HANDLER);
-CY_ISR_PROTO(SAMPLE_HANDLER);
+CY_ISR_PROTO(CLOCK_HANDLER);
 
 /* -- Regulatorparametre -- */
 const double Kp = 3.8063;       // Times gain
@@ -29,9 +29,9 @@ int setpoint;
 uint8_t sampleCount = 0;
 
 /* -- ADC -- */
-#define SAMPLESIZE 8000
+#define SAMPLESIZE 10000
 #define MAVG 5
-#define SIZE 25
+#define SIZE 68
 uint8_t sampleFlag = 0;
 uint8_t inputCount = 0;
 uint8_t outputCount = 0;
@@ -39,6 +39,9 @@ double input[MAVG] = {0};
 double temp[SIZE] = {0};
 
 double V_sense, V_PT1000, current, R_PT1000;
+
+uint8_t bitStream[SAMPLESIZE] = {0};
+uint32_t streamCount = 0;
 
 /* -- UART -- */
 char buffer[256];
@@ -56,7 +59,7 @@ int main(void)
     UART_PutString("Regulator is running.. \n\r");
     CyGlobalIntEnable; /* Enable global interrupts. */
     rx_int_StartEx(UART_RX_HANDLER);
-    sample_int_StartEx(SAMPLE_HANDLER);
+    clock_int_StartEx(CLOCK_HANDLER);
     
     initHeatController();
     initRegulator(Kp, Ti, T_sample);
@@ -97,18 +100,26 @@ int main(void)
             }
         } 
     }
-    if(sampleFlag)
+    if(streamCount == SAMPLESIZE)
     {
-        sampleFlag = 0;
+        /* -- Counter for Regulation -- */
+        sampleCount++;
+        /* -- Counter ADC Input/Output -- */
+        inputCount++;
 
         /* -- Get Input Value -- */
         inputCount = (inputCount == SIZE ? 0 : inputCount);
-        input[inputCount%MAVG] = (double)Value_counter_ReadCapture()/SAMPLESIZE;
+        uint32_t sum = 0;
+        for(size_t i = 0 ; i < SAMPLESIZE ; i++)
+        {
+            sum += bitStream[i];
+        }
+        input[inputCount%MAVG] = (double)sum/SAMPLESIZE;
         /* -- Set Temperature -- */
         temp[inputCount] = getProcessTemp(input);
         
     
-        if(sampleCount >= (T_sample*SIZE))
+        if(sampleCount >= SIZE) // ~ 68 sekunder
         {
             controlSignal = calculateControlSignal(temp[inputCount], setpoint);
             setControlSignal(controlSignal);
@@ -129,19 +140,11 @@ CY_ISR(UART_RX_HANDLER)
     rx_int_ClearPending();
 }
 
-CY_ISR(SAMPLE_HANDLER)
-{ 
-    sampleFlag = 1;
-    /* -- Counter for Regulation -- */
-    sampleCount++;
-    /* -- Counter ADC Input/Output -- */
-    inputCount++;
-    inputCount = (inputCount == SIZE ? 0 : inputCount++);
-    
-    sample_int_ClearPending();
+CY_ISR(CLOCK_HANDLER)
+{
+    bitStream[streamCount] = Bit_Stream_Read();
+    streamCount++;
+    streamCount = (streamCount == SAMPLESIZE ? 0 : streamCount);
 }
-
-
-
 
 /* [] END OF FILE */

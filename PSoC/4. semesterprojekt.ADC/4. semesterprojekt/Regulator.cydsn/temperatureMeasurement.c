@@ -27,11 +27,7 @@ double V_sense, V_PT1000, current, R_PT1000;
 /* -- Init Settings -- */
 void initTempMeasure() {
     Clock_Start();   /* Start Clock - DC 0% */
-    /* -- Average Counter -- */
-    Value_counter_Start();
-    Sample_counter_Start();
-    Value_counter_WritePeriod(SAMPLE_SIZE);   //Large enough to not overflow
-    Sample_counter_WritePeriod(SAMPLE_SIZE);
+
     /* -- Current Reference -- */    
     ADC_CURRENT_SENSE_Start();
 }
