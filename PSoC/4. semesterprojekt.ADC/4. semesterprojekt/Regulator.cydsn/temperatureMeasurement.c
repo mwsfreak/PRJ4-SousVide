@@ -16,11 +16,10 @@
 /* -- PT1000 -- */
 const double A = 0.0039083;
 const double B = -0.0000005775;
-const uint16_t R_SENSE = 3300;
+const uint16_t R_SENSE = 1000;
 
-#define SIZE 25
-#define MAVG 5
-const uint16_t SAMPLE_SIZE = 8000;          //Number of samples before averaging
+#define MAVG 10
+#define GAIN_ADC 3.796
 
 double V_sense, V_PT1000, current, R_PT1000;
 
@@ -30,6 +29,7 @@ void initTempMeasure() {
 
     /* -- Current Reference -- */    
     ADC_CURRENT_SENSE_Start();
+    ADC_CURRENT_SENSE_StartConvert();
 }
 
 
@@ -38,16 +38,16 @@ double getProcessTemp(double *input) {
     double processTemp = 0.0;
     
     /* -- Current Calculation -- */
-    ADC_CURRENT_SENSE_IsEndConversion(ADC_CURRENT_SENSE_WAIT_FOR_RESULT);         
+    ADC_CURRENT_SENSE_IsEndConversion(ADC_CURRENT_SENSE_WAIT_FOR_RESULT);   
     V_sense = ADC_CURRENT_SENSE_CountsTo_Volts(ADC_CURRENT_SENSE_GetResult16());
     
     /* -- Moving Average Filter -- */
     double sum = 0;
-    for(uint8_t i = 0; i < SIZE ; i++)
+    for(uint8_t i = 0; i < MAVG ; i++)
     {
         sum += input[i];
     }
-    V_PT1000 = (sum/MAVG)*5;
+    V_PT1000 = (sum/MAVG)*(5/GAIN_ADC);
     
     /* -- Temp Voltage Calculation -- */
     current = V_sense / R_SENSE;

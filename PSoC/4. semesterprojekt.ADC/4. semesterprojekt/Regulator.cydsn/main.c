@@ -29,18 +29,18 @@ int setpoint;
 uint8_t sampleCount = 0;
 
 /* -- ADC -- */
-#define SAMPLESIZE 10000
-#define MAVG 5
+#define SAMPLESIZE 20000
+#define MAVG 10
 #define SIZE 68
 uint8_t sampleFlag = 0;
 uint8_t inputCount = 0;
 uint8_t outputCount = 0;
 double input[MAVG] = {0};
-double temp[SIZE] = {0};
+double temp = 0;
 
-double V_sense, V_PT1000, current, R_PT1000;
+extern double V_sense, V_PT1000, current, R_PT1000;
 
-uint8_t bitStream[SAMPLESIZE] = {0};
+uint8_t bitStream[2*SAMPLESIZE] = {0};
 uint32_t streamCount = 0;
 
 /* -- UART -- */
@@ -60,7 +60,6 @@ int main(void)
     CyGlobalIntEnable; /* Enable global interrupts. */
     rx_int_StartEx(UART_RX_HANDLER);
     clock_int_StartEx(CLOCK_HANDLER);
-    
     initHeatController();
     initRegulator(Kp, Ti, T_sample);
     initTempMeasure();
@@ -99,37 +98,38 @@ int main(void)
                 }
             }
         } 
-    }
-    if(streamCount == SAMPLESIZE)
-    {
-        /* -- Counter for Regulation -- */
-        sampleCount++;
-        /* -- Counter ADC Input/Output -- */
-        inputCount++;
+        if(streamCount >= SAMPLESIZE)
+        {
+            streamCount = 0;
+            /* -- Counter for Regulation -- */
+            sampleCount++;
+            /* -- Counter ADC Input/Output -- */
+            inputCount++;
 
-        /* -- Get Input Value -- */
-        inputCount = (inputCount == SIZE ? 0 : inputCount);
-        uint32_t sum = 0;
-        for(size_t i = 0 ; i < SAMPLESIZE ; i++)
-        {
-            sum += bitStream[i];
-        }
-        input[inputCount%MAVG] = (double)sum/SAMPLESIZE;
-        /* -- Set Temperature -- */
-        temp[inputCount] = getProcessTemp(input);
+            /* -- Get Input Value -- */
+            inputCount = (inputCount == SIZE ? 0 : inputCount);
+            uint32_t sum = 0;
+            for(size_t i = 0 ; i < SAMPLESIZE ; i++)
+            {
+                sum += bitStream[i];
+            }
+            input[inputCount%MAVG] = (double)sum/SAMPLESIZE;
+            /* -- Set Temperature -- */
+            temp = getProcessTemp(input);
+            
         
-    
-        if(sampleCount >= SIZE) // ~ 68 sekunder
-        {
-            controlSignal = calculateControlSignal(temp[inputCount], setpoint);
-            setControlSignal(controlSignal);
-            sampleCount = 0;
-        }
-        
-        if(inputCount == (SIZE -1) && regulatorState == started)
-        {
-            sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp[inputCount], (float)(setpoint-temp[inputCount]), controlSignal, V_sense, V_PT1000);
-            UART_PutString(buffer);
+            if(sampleCount >= SIZE) // ~ 68 sekunder
+            {
+                controlSignal = calculateControlSignal(temp, setpoint);
+                setControlSignal(controlSignal);
+                sampleCount = 0;
+            }
+            
+            if(regulatorState == started)
+            {
+                sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
+                UART_PutString(buffer);
+            }
         }
     }
 }
@@ -142,9 +142,9 @@ CY_ISR(UART_RX_HANDLER)
 
 CY_ISR(CLOCK_HANDLER)
 {
-    bitStream[streamCount] = Bit_Stream_Read();
+    bitStream[streamCount%SAMPLESIZE] = Bit_Stream_Read();
     streamCount++;
-    streamCount = (streamCount == SAMPLESIZE ? 0 : streamCount);
+    clock_int_ClearPending();
 }
 
 /* [] END OF FILE */
