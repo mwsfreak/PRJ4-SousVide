@@ -29,8 +29,8 @@ int setpoint;
 uint8_t sampleCount = 0;
 
 /* -- ADC -- */
-#define SAMPLESIZE 20000
-#define MAVG 10
+#define SAMPLESIZE 30000
+#define MAVG 5
 #define SIZE 68
 uint8_t sampleFlag = 0;
 uint8_t inputCount = 0;
@@ -75,7 +75,7 @@ int main(void)
                     initRegulator(Kp, Ti, T_sample);                  
                     heatPWM_Start();
                     UART_PutString("Regulator started\n\r");
-                    UART_PutString("setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000\n\r");
+                    //UART_PutString("setpoint, temperatur, fejl, controlsignal, V_sense, V_PT1000\n\r");
                     regulatorState = started;
                     rxChar = 0;
                     break;
@@ -118,18 +118,20 @@ int main(void)
             temp = getProcessTemp(input);
             
         
-            if(sampleCount >= SIZE) // ~ 68 sekunder
-            {
-                controlSignal = calculateControlSignal(temp, setpoint);
-                setControlSignal(controlSignal);
-                sampleCount = 0;
-            }
+//            if(sampleCount >= SIZE) // ~ 68 sekunder
+//            {
+//                controlSignal = calculateControlSignal(temp, setpoint);
+//                setControlSignal(controlSignal);
+//                sampleCount = 0;
+//            }
             
-            if(regulatorState == started)
-            {
-                sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
-                UART_PutString(buffer);
-            }
+//            if(regulatorState == started)
+//            {
+//                sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
+//                UART_PutString(buffer);
+//            }
+            sprintf(buffer, "Voltage delta sigma: %f\n\r",V_PT1000);
+            UART_PutString(buffer);
         }
     }
 }

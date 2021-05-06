@@ -260,10 +260,12 @@
   <Group key="DWRInstGuidMapping">
     <Group key="Pin">
       <Data key="4a228007-0334-453e-9d02-b1f25e8a9a1e" value="MOSFET_OUT" />
+      <Data key="6b054cf6-ae15-4eb2-8ada-e8544366cd14" value="clock_out" />
       <Data key="86ed9ac5-0a9a-48d7-8a7b-d3d5040f0048" value="V_feedback" />
       <Data key="1226e863-c6df-4980-b8ea-bb69faaee579" value="Pin_2" />
       <Data key="1425177d-0d0e-4468-8bcc-e638e5509a9b" value="Rx" />
       <Data key="77715107-f8d5-47e5-a629-0fb83101ac6b" value="Pin_1" />
+      <Data key="b74fe42f-b525-4cb0-82a5-7eaf88fa0824" value="clock_out" />
       <Data key="e473ea26-7f8c-4b27-8769-4f8e83175b30" value="Bit_Stream" />
       <Data key="ed092b9b-d398-4703-be89-cebf998501f6" value="Tx" />
     </Group>
@@ -3357,6 +3359,11 @@
         <Data key="Port Format" value="0,0" />
       </Group>
     </Group>
+    <Group key="6b054cf6-ae15-4eb2-8ada-e8544366cd14">
+      <Group key="0">
+        <Data key="Port Format" value="0,1" />
+      </Group>
+    </Group>
     <Group key="86ed9ac5-0a9a-48d7-8a7b-d3d5040f0048">
       <Group key="0">
         <Data key="Port Format" value="2,2" />
@@ -3375,6 +3382,11 @@
     <Group key="77715107-f8d5-47e5-a629-0fb83101ac6b">
       <Group key="0">
         <Data key="Port Format" value="3,7" />
+      </Group>
+    </Group>
+    <Group key="b74fe42f-b525-4cb0-82a5-7eaf88fa0824">
+      <Group key="0">
+        <Data key="Port Format" value="0,1" />
       </Group>
     </Group>
     <Group key="e473ea26-7f8c-4b27-8769-4f8e83175b30">

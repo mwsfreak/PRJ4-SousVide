@@ -18,8 +18,8 @@ const double A = 0.0039083;
 const double B = -0.0000005775;
 const uint16_t R_SENSE = 1000;
 
-#define MAVG 10
-#define GAIN_ADC 3.796
+#define MAVG 5
+#define GAIN_ADC 3.629
 
 double V_sense, V_PT1000, current, R_PT1000;
 
@@ -47,7 +47,7 @@ double getProcessTemp(double *input) {
     {
         sum += input[i];
     }
-    V_PT1000 = (sum/MAVG)*(5/GAIN_ADC);
+    V_PT1000 = (sum/MAVG)*(4.935/GAIN_ADC);
     
     /* -- Temp Voltage Calculation -- */
     current = V_sense / R_SENSE;
