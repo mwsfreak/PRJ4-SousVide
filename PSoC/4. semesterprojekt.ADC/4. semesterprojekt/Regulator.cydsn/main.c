@@ -14,6 +14,7 @@
 #include "regulator.h"
 #include "temperatureMeasurement.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 CY_ISR_PROTO(UART_RX_HANDLER);
@@ -29,8 +30,8 @@ int setpoint;
 uint8_t sampleCount = 0;
 
 /* -- ADC -- */
-#define SAMPLESIZE 30000
-#define MAVG 5
+#define SAMPLESIZE 60000
+#define MAVG 20
 #define SIZE 68
 uint8_t sampleFlag = 0;
 uint8_t inputCount = 0;
@@ -40,7 +41,8 @@ double temp = 0;
 
 extern double V_sense, V_PT1000, current, R_PT1000;
 
-uint8_t bitStream[2*SAMPLESIZE] = {0};
+//uint8_t bitStream[2*SAMPLESIZE] = {0};
+uint32_t sum = 0;
 uint32_t streamCount = 0;
 
 /* -- UART -- */
@@ -108,29 +110,25 @@ int main(void)
 
             /* -- Get Input Value -- */
             inputCount = (inputCount == SIZE ? 0 : inputCount);
-            uint32_t sum = 0;
-            for(size_t i = 0 ; i < SAMPLESIZE ; i++)
-            {
-                sum += bitStream[i];
-            }
+
             input[inputCount%MAVG] = (double)sum/SAMPLESIZE;
             /* -- Set Temperature -- */
             temp = getProcessTemp(input);
-            
+            sum = 0;
         
-//            if(sampleCount >= SIZE) // ~ 68 sekunder
-//            {
-//                controlSignal = calculateControlSignal(temp, setpoint);
-//                setControlSignal(controlSignal);
-//                sampleCount = 0;
-//            }
+            if(sampleCount >= SIZE) // ~ 68 sekunder
+            {
+                controlSignal = calculateControlSignal(temp, setpoint);
+                setControlSignal(controlSignal);
+                sampleCount = 0;
+            }
             
-//            if(regulatorState == started)
-//            {
-//                sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
-//                UART_PutString(buffer);
-//            }
-            sprintf(buffer, "Voltage delta sigma: %f\n\r",V_PT1000);
+            if(regulatorState == started)
+            {
+                sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
+                UART_PutString(buffer);
+            }
+            sprintf(buffer, "Voltage delta sigma: %f mV\n\r",(V_PT1000-0.035)*1000);
             UART_PutString(buffer);
         }
     }
@@ -144,7 +142,7 @@ CY_ISR(UART_RX_HANDLER)
 
 CY_ISR(CLOCK_HANDLER)
 {
-    bitStream[streamCount%SAMPLESIZE] = Bit_Stream_Read();
+    sum += Bit_Stream_Read();
     streamCount++;
     clock_int_ClearPending();
 }
