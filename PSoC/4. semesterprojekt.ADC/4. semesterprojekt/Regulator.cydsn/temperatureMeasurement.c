@@ -19,7 +19,8 @@ const double B = -0.0000005775;
 const uint16_t R_SENSE = 1000;
 
 #define MAVG 20
-#define GAIN_ADC 3.447933
+#define GAIN_ADC 3.825 
+//#define GAIN_ADC 1 
 
 double V_sense, V_PT1000, current, R_PT1000;
 

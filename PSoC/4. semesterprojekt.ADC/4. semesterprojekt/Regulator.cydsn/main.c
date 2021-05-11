@@ -128,7 +128,7 @@ int main(void)
                 sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
                 UART_PutString(buffer);
             }
-            sprintf(buffer, "Voltage delta sigma: %f mV\n\r",(V_PT1000)*1000);
+            sprintf(buffer, "Voltage delta sigma: %f\n\r",V_PT1000);
             UART_PutString(buffer);
         }
     }
