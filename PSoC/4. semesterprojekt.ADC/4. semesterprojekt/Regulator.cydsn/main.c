@@ -30,7 +30,7 @@ int setpoint;
 uint8_t sampleCount = 0;
 
 /* -- ADC -- */
-#define SAMPLESIZE 60000
+#define SAMPLESIZE 300000
 #define MAVG 20
 #define SIZE 68
 uint8_t sampleFlag = 0;
@@ -128,7 +128,7 @@ int main(void)
                 sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
                 UART_PutString(buffer);
             }
-            sprintf(buffer, "Voltage delta sigma: %f mV\n\r",(V_PT1000-0.035)*1000);
+            sprintf(buffer, "Voltage delta sigma: %f mV\n\r",(V_PT1000)*1000);
             UART_PutString(buffer);
         }
     }
