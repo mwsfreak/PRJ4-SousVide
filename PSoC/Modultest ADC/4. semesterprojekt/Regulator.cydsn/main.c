@@ -30,7 +30,11 @@ int setpoint;
 uint8_t sampleCount = 0;
 
 /* -- ADC -- */
+<<<<<<< HEAD:PSoC/4. semesterprojekt.ADC/4. semesterprojekt/Regulator.cydsn/main.c
 #define SAMPLESIZE 75000
+=======
+#define SAMPLESIZE 300000
+>>>>>>> main:PSoC/Modultest ADC/4. semesterprojekt/Regulator.cydsn/main.c
 #define MAVG 20
 #define SIZE 68
 uint8_t sampleFlag = 0;
@@ -128,7 +132,11 @@ int main(void)
                 sprintf(buffer, "%d,  %f,  %f,  %f,  %f,  %f\n\r", setpoint, (float)temp, (float)(setpoint-temp), controlSignal, V_sense, V_PT1000);
                 UART_PutString(buffer);
             }
+<<<<<<< HEAD:PSoC/4. semesterprojekt.ADC/4. semesterprojekt/Regulator.cydsn/main.c
             sprintf(buffer, "%f\n\r",(V_PT1000)*1000);//sprintf(buffer, "Voltage delta sigma: %f mV\n\r",(V_PT1000-0.0994)*1000);
+=======
+            sprintf(buffer, "Voltage delta sigma: %f\n\r",V_PT1000);
+>>>>>>> main:PSoC/Modultest ADC/4. semesterprojekt/Regulator.cydsn/main.c
             UART_PutString(buffer);
         }
     }

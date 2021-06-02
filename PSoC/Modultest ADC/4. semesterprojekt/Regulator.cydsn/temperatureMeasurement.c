@@ -19,7 +19,12 @@ const double B = -0.0000005775;
 const uint16_t R_SENSE = 1000;
 
 #define MAVG 20
+<<<<<<< HEAD:PSoC/4. semesterprojekt.ADC/4. semesterprojekt/Regulator.cydsn/temperatureMeasurement.c
 #define GAIN_ADC 1//3.447933
+=======
+#define GAIN_ADC 3.825 
+//#define GAIN_ADC 1 
+>>>>>>> main:PSoC/Modultest ADC/4. semesterprojekt/Regulator.cydsn/temperatureMeasurement.c
 
 double V_sense, V_PT1000, current, R_PT1000;
 

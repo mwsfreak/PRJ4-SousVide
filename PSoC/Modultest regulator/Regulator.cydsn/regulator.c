@@ -23,16 +23,10 @@ void initRegulator(double Kp, double Ti, double T_sample)
     // Reset regulator memory
     outputOld = 0;
     errorOld = 0;
-    
-    /*char buffer2[256];
-    sprintf(buffer2, "b0 = %f\n\rb1 = %f\n\n\r",b0, b1);
-    UART_PutString(buffer2);*/
 }
 
 double calculateControlSignal(double processVal, double setpoint)
-{
-    //char buffer3[256];
-    
+{    
     // Calculate error
     errorNew = setpoint - processVal;
     
@@ -45,13 +39,9 @@ double calculateControlSignal(double processVal, double setpoint)
     if(outputNew < 0)
         outputNew = 0;
     
-    //sprintf(buffer3, "errorNew = %f\n\rerrorOld = %f\n\routputNew = %f\n\routputOld = %f\n\r", errorNew, errorOld, outputNew, outputOld);
-    //UART_PutString(buffer3);
-    
     // Update delay line
     errorOld = errorNew;
     outputOld = outputNew;
-    
     
     // Return result
     return outputNew;
